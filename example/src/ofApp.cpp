@@ -11,7 +11,7 @@ void ofApp::setup(){
 	}
 	
 	gui.setup();
-	gui.add(numSections.set("Num Sections", 1,1, 10));
+	gui.add(scale.set("Scale", 1,1, 10));
 }
 
 //--------------------------------------------------------------
@@ -21,9 +21,14 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	cam.begin();
+	if(ofGetKeyPressed(' ')){
+		renderer.drawDebug(cam, ofGetCurrentViewport(), scale.get(), std::bind(&ofApp::drawScene, this), ofGetKeyPressed(OF_KEY_SHIFT));
+	}else{
+	float n = scale.get();
+	cam.begin();//{0,0,floor(ofGetWidth()/n)*n,floor(ofGetHeight()/n)*n });
 	drawScene();
 	cam.end();
+	}
 	gui.draw();
 }
 //--------------------------------------------------------------
@@ -42,7 +47,7 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 	if(key == OF_KEY_RETURN){
-		renderer.render(cam, numSections.get(), std::bind(&ofApp::drawScene, this), ofGetTimestampString()+".png");
+		renderer.render(cam, ofGetCurrentViewport(), scale.get(), std::bind(&ofApp::drawScene, this), ofGetTimestampString()+".png");
 	}
 }
 

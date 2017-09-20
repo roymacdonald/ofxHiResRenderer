@@ -28,8 +28,8 @@ class ofApp: public ofBaseApp{
 
 		ofEasyCam cam;
 
-		ofParameter<int> numSections;
-	
+//		ofParameter<int> numSections;
+		ofParameter<float> scale;
 		ofxPanel gui;
 		void drawScene();
 

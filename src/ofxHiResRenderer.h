@@ -1,20 +1,23 @@
 #pragma once
 #include "ofMain.h"
 
-class ofxHiResRenderer{//:	private ofCamera{
+class ofxHiResRenderer{
 public:
-	void render(const ofCamera& cam, int numSections, std::function<void()> drawScene, std::string path = "");
+	void render(const ofCamera& cam, const ofRectangle& viewport, float scale, std::function<void()> drawScene, std::string path = "", bool bDrawToScreen = false);
 
+	void drawDebug(const ofCamera& cam, const ofRectangle& viewport, float scale, std::function<void()> drawScene, bool bDrawViewport);
 protected:
-	float getAngle(float pct, float fov);
-	
-	glm::vec2 getOffsetForSection(int x, int y);
-	
-	glm::vec2 getIntSize();
 
-	void copyPixels(ofPixels& target, ofPixels& original, int posX, int posY);
+//--------------------------------------------------------------
+	float getFovForViewport(const ofRectangle &viewport, const ofCamera& camera);
+	glm::vec2 getOffsetForViewport(const ofRectangle &viewport);
+	
+	void copyPixels(ofPixels& target, ofPixels& original, int posX, int posY) const;
+	ofCamera getCamForViewport(const ofCamera& cam, const ofRectangle& viewport);
 private:
 
-	size_t numSections = 0;
+	ofRectangle originalViewport, renderTotalRect;
+	float scale = 0;
+	
 	bool bRendering = false;
 };
