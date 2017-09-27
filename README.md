@@ -1,14 +1,14 @@
-#ofxHiResRenderer
+# ofxHiResRenderer
 
 
 Hi Resolution renderer for openFrameworks.
 
 
-##Introduction
+## Introduction
 
 This addon provides a class that will let you render hi resolution images from what you see on screen. This is achieved by doing a [tiled render](https://en.wikipedia.org/wiki/Tiled_rendering).
 
-##How to use:
+## How to use:
 
 You will need to declare an instance of `ofxHiResRenderer` somewhere in your code. It could be either a class variable or a temporary instance created when a specific event happens. It's up to you which one to choose.
 
@@ -25,18 +25,18 @@ Its arguments are as follows:
 * `std::function<void()> drawScene` The function that draws the stuff into your screen. This can be an `std::function` instance, a lambda expression, or a regular class method binded using `std::bind` (as you can see in the example).
 * `std::string path` this is the file path where to save the rendered image. This file needs an alpha channel, so avoid jpegs, otherwise you'll get a white background. The background color is not rendered. It is transparent.
 
-##TO DO
+## TO DO
 
 * Render method that doesnt require a camera, so scenes that dont have cameras can be rendered.
 * Option to save with or without background.
 * Allow setting the rendered image size instead of the scale.
 
 
-##License
+## License
 
 Read `license.md`.
 
-##Compatibility
+## Compatibility
 
 Works with openframeworks version 0.10 onwards.
 
