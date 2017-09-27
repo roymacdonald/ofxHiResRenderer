@@ -3,12 +3,9 @@
 
 class ofxHiResRenderer{
 public:
-	void render(const ofCamera& cam, const ofRectangle& viewport, float scale, std::function<void()> drawScene, std::string path = "", bool bDrawToScreen = false);
-
-	void drawDebug(const ofCamera& cam, const ofRectangle& viewport, float scale, std::function<void()> drawScene, bool bDrawViewport);
+	void render(const ofCamera& cam, const ofRectangle& viewport, float scale, std::function<void()> drawScene, std::string path);
 protected:
 
-//--------------------------------------------------------------
 	float getFovForViewport(const ofRectangle &viewport, const ofCamera& camera);
 	glm::vec2 getOffsetForViewport(const ofRectangle &viewport);
 	

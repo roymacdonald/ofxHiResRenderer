@@ -17,13 +17,13 @@ ofRectangle floorRect(const ofRectangle& rect){
 	return r;
 }
 //--------------------------------------------------------------
-void ofxHiResRenderer::render(const ofCamera& cam, const ofRectangle& viewport, float scale, std::function<void()> drawScene,  std::string path, bool bDrawToScreen){
+void ofxHiResRenderer::render(const ofCamera& cam, const ofRectangle& viewport, float scale, std::function<void()> drawScene,  std::string path){
 	this->scale = scale;
 	if(scale <= 1){
 		ofLogError("ofxHiResRenderer::render", "render failed. Scale needs to be more than 1");
 		return;
 	}
-	if(path.empty() && !bDrawToScreen){
+	if(path.empty()){
 		ofLogError("ofxHiResRenderer::render", "render failed. Empty path to save file.");
 	}
 	originalViewport = floorRect(viewport);
@@ -31,14 +31,7 @@ void ofxHiResRenderer::render(const ofCamera& cam, const ofRectangle& viewport, 
 	originalViewport.y = 0;
 	ofFbo fbo;
 	ofPixels renderPixels;
-	if(bDrawToScreen){
-		originalViewport.width /= scale;
-		originalViewport.height /= scale;
-		originalViewport = floorRect(originalViewport);
-		renderTotalRect = floorRect(viewport);
-	}else{
-		renderTotalRect = ofRectangle(0,0,round(viewport.width* scale),round(viewport.height* scale));
-	}
+	renderTotalRect = ofRectangle(0,0,round(viewport.width* scale),round(viewport.height* scale));
 	fbo.allocate(originalViewport.width, originalViewport.height,GL_RGBA32F_ARB, 4);
 	renderPixels.allocate(renderTotalRect.width , renderTotalRect.height, OF_IMAGE_COLOR_ALPHA);
 	
@@ -51,38 +44,28 @@ void ofxHiResRenderer::render(const ofCamera& cam, const ofRectangle& viewport, 
 			vp.y = vp.height * y;
 			vp = vp.getIntersection(renderTotalRect);
 			auto camVp = vp;
-			if(!bDrawToScreen){
-				if(vp.width != fbo.getWidth()||vp.height != fbo.getHeight()){
-					fbo.allocate(vp.width, vp.height,GL_RGBA32F_ARB, 4);
-				}
-				fbo.begin();
-				ofClear(0, 0);
-				camVp.x = 0;
-				camVp.y = 0;
+			camVp.x = 0;
+			camVp.y = 0;
+			if(vp.width != fbo.getWidth()||vp.height != fbo.getHeight()){
+				fbo.allocate(vp.width, vp.height,GL_RGBA32F_ARB, 4);
 			}
 			ofCamera rectCam = getCamForViewport(cam, vp);
+			fbo.begin();
+			ofClear(0, 0);
 			rectCam.begin(camVp);
 			drawScene();
 			rectCam.end();
+			fbo.end();
 			
-			if(!bDrawToScreen){
-				fbo.end();
-				ofPixels tempPix;
-				fbo.readToPixels(tempPix);
-				copyPixels(renderPixels, tempPix, vp.x, vp.y);
-			}
+			ofPixels tempPix;
+			fbo.readToPixels(tempPix);
+			copyPixels(renderPixels, tempPix, vp.x, vp.y);
 		}
 	}
-	if(!bDrawToScreen){
-		ofSaveImage(renderPixels,  path);
-	}
+	cout << ofToDataPath(path, true) << endl;
+	ofSaveImage(renderPixels,  ofToDataPath(path, true));
 	bRendering = false;
 	
-}
-
-//--------------------------------------------------------------
-void ofxHiResRenderer::drawDebug(const ofCamera& cam, const ofRectangle& viewport, float scale, std::function<void()> drawScene, bool bDrawViewport){
-	render(cam, viewport, scale, drawScene, "", true);
 }
 //--------------------------------------------------------------
 ofCamera ofxHiResRenderer::getCamForViewport(const ofCamera& cam, const ofRectangle& viewport){
