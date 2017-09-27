@@ -11,7 +11,7 @@ void ofApp::setup(){
 	}
 	
 	gui.setup();
-	gui.add(scale.set("Scale", 1,1, 10));
+	gui.add(scale.set("Rendering Scale", 2,1, 10));
 }
 
 //--------------------------------------------------------------
@@ -21,15 +21,20 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	if(ofGetKeyPressed(' ')){
-		renderer.drawDebug(cam, ofGetCurrentViewport(), scale.get(), std::bind(&ofApp::drawScene, this), ofGetKeyPressed(OF_KEY_SHIFT));
-	}else{
-	float n = scale.get();
-	cam.begin();//{0,0,floor(ofGetWidth()/n)*n,floor(ofGetHeight()/n)*n });
+	cam.begin();
 	drawScene();
 	cam.end();
-	}
 	gui.draw();
+
+	stringstream ss;
+	ss << "Change the \"Rendering Scale\" slider to choose the render scale;\n how many times larger that what you see it will be.\n";
+	ss << "Press the space key to render what you are currently seeing.\n It will be stored in:\n " << ofToDataPath("",true);
+
+
+	auto r = gui.getShape();
+	ofDrawBitmapStringHighlight(ss.str(), r.getMinX(), r.getMaxY() + 20);
+
+
 }
 //--------------------------------------------------------------
 void ofApp::drawScene(){
@@ -47,6 +52,8 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 	if(key == OF_KEY_RETURN){
+		//This is the important line!
+		// Look at the readme file to check what is each parameter
 		renderer.render(cam, ofGetCurrentViewport(), scale.get(), std::bind(&ofApp::drawScene, this), ofGetTimestampString()+".png");
 	}
 }
