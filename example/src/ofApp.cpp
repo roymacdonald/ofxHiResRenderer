@@ -51,7 +51,7 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	if(key == OF_KEY_RETURN){
+	if(key == ' '){
 		//This is the important line!
 		// Look at the readme file to check what is each parameter
 		renderer.render(cam, ofGetCurrentViewport(), scale.get(), std::bind(&ofApp::drawScene, this), ofGetTimestampString()+".png");
