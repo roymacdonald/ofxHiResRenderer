@@ -12,6 +12,7 @@ void ofApp::setup(){
 	
 	gui.setup();
 	gui.add(scale.set("Rendering Scale", 2,1, 10));
+	cam.enableOrtho();
 }
 
 //--------------------------------------------------------------
@@ -54,6 +55,7 @@ void ofApp::keyReleased(int key){
 	if(key == ' '){
 		//This is the important line!
 		// Look at the readme file to check what is each parameter
+		ofSaveFrame();
 		renderer.render(cam, ofGetCurrentViewport(), scale.get(), std::bind(&ofApp::drawScene, this), ofGetTimestampString()+".png");
 	}
 }

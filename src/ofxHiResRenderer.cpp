@@ -37,6 +37,7 @@ void ofxHiResRenderer::render(const ofCamera& cam, const ofRectangle& viewport, 
 	
 	bRendering = true;
 	int n = ceil(scale);
+	ofCamera rectCam;
 	for(int y = 0; y < n; y++){
 		for(int x = 0; x < n; x++){
 			auto vp =  originalViewport;
@@ -49,11 +50,23 @@ void ofxHiResRenderer::render(const ofCamera& cam, const ofRectangle& viewport, 
 			if(vp.width != fbo.getWidth()||vp.height != fbo.getHeight()){
 				fbo.allocate(vp.width, vp.height,GL_RGBA32F_ARB, 4);
 			}
-			ofCamera rectCam = getCamForViewport(cam, vp);
+			
+			getCamForViewport(rectCam, cam, vp);
+			
 			fbo.begin();
 			ofClear(0, 0);
+			if(rectCam.getOrtho()){
+				rectCam.setFarClip(rectCam.getFarClip()*scale);
+			}
 			rectCam.begin(camVp);
+			if(rectCam.getOrtho()){
+				ofPushMatrix();
+				ofScale(scale);
+			}
 			drawScene();
+			if(rectCam.getOrtho()){
+				ofPopMatrix();
+			}
 			rectCam.end();
 			fbo.end();
 			
@@ -68,12 +81,17 @@ void ofxHiResRenderer::render(const ofCamera& cam, const ofRectangle& viewport, 
 	
 }
 //--------------------------------------------------------------
-ofCamera ofxHiResRenderer::getCamForViewport(const ofCamera& cam, const ofRectangle& viewport){
-	ofCamera rectCam = cam;
+void ofxHiResRenderer::getCamForViewport(ofCamera& rectCam, const ofCamera& cam, const ofRectangle& viewport){
+	rectCam = cam;
+	if(cam.getOrtho()){
+		auto offset = viewport.getCenter() - renderTotalRect.getCenter(); 
+		rectCam.move(rectCam.getXAxis()* offset.x + rectCam.getYAxis()*offset.y);
+		rectCam.setVFlip(!rectCam.isVFlipped());
+	}else{
 	rectCam.setFov(getFovForViewport(viewport, cam));
 	rectCam.setLensOffset(getOffsetForViewport(viewport));
 	rectCam.setAspectRatio(viewport.width/viewport.height);
-	return rectCam;
+	}
 }
 //--------------------------------------------------------------
 void ofxHiResRenderer::copyPixels(ofPixels& target, ofPixels& original, int posX, int posY) const {

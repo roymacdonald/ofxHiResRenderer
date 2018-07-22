@@ -10,7 +10,7 @@ protected:
 	glm::vec2 getOffsetForViewport(const ofRectangle &viewport);
 	
 	void copyPixels(ofPixels& target, ofPixels& original, int posX, int posY) const;
-	ofCamera getCamForViewport(const ofCamera& cam, const ofRectangle& viewport);
+	void getCamForViewport(ofCamera& rectCam, const ofCamera& cam, const ofRectangle& viewport);
 private:
 
 	ofRectangle originalViewport, renderTotalRect;
